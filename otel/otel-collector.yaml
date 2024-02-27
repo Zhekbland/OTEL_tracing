@@ -1,0 +1,47 @@
+# От кого получаем пакеты данных и по какому протоколу (https://github.com/open-telemetry/opentelemetry-collector/blob/main/receiver/README.md).
+# Полный перечень всех возможных ресиверов и их конфигураций (https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver).
+receivers: 
+  otlp:
+    protocols:
+      grpc:
+        max_recv_msg_size_mib: 25 # Расширение пакета передачи данных для протокола grpc
+
+# Куда отправляем пакеты данных и по какому протоколу (https://github.com/open-telemetry/opentelemetry-collector/blob/main/exporter/README.md).
+# (https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter).
+exporters:
+  otlp:
+    endpoint: tempo:4317 # Наш Tempo Grafana backend
+    sending_queue: # Конфигурация очереди для отправки из OpenTelemetry Collector в Tempo Grafana (https://github.com/open-telemetry/opentelemetry-collector/blob/main/exporter/exporterhelper/README.md)
+      enabled: true # включаем конфигурацию 
+      num_consumers: 10 # Кол-во консьюмеров которые выполняют dequeue пачки данных, которые нам прислал receivers
+      queue_size: 1000 # Максимальный размер это queue, если привысит то данные будут просто дропаться
+    tls: #Конфигурация безопасности (https://github.com/open-telemetry/opentelemetry-collector/blob/main/config/configtls/README.md)
+      insecure: true
+  #prometheus:
+  #  endpoint: "prometheus:8888"
+
+# Используется для настройки того, какие компоненты включены в Collector https://opentelemetry.io/docs/collector/configuration/#service
+# https://github.com/open-telemetry/opentelemetry-collector/blob/main/service/README.md
+service:
+  pipelines:
+    traces: # Какие компоненты и конфиги включены в traces
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp]
+    #metrics:
+    #  receivers: [otlp]
+    #  exporters: [prometheus]
+    
+# Процессоры используются на различных этапах конвейера.
+# Обычно процессор предварительно обрабатывает данные перед их экспортом https://github.com/open-telemetry/opentelemetry-collector/blob/main/processor/README.md
+# https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor
+processors:
+  #memory_limiter: # Процессор-ограничитель памяти используется для предотвращения ситуаций нехватки памяти на коллекторе. https://github.com/open-telemetry/opentelemetry-collector/blob/main/processor/memorylimiterprocessor/README.md
+  #  check_interval: 1s
+  #  limit_mib: 4000
+  #  spike_limit_mib: 800
+  #  ballast_size_mib: 1000
+  batch: # Пакетная обработка помогает лучше сжимать данные и уменьшать количество исходящих соединений, необходимых для передачи данных. https://github.com/open-telemetry/opentelemetry-collector/blob/main/processor/batchprocessor/README.md
+    timeout: 5s # (по умолчанию = 200 мс) Период времени, по истечении которого пакет будет отправлен независимо от его размера.
+    send_batch_size: 10000 #60k (по умолчанию = 8192) количество спанов, после которых пакет будет отправлен независимо от времени ожидания. send_batch_size действует как триггер и не влияет на размер пакета.
+    send_batch_max_size: 11000 #61K (default = 0) Верхний предел размера пакета. Оно должно быть больше или равно send_batch_size.

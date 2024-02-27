@@ -1,0 +1,79 @@
+# Основные конфигурации сервера tempo https://grafana.com/docs/tempo/latest/configuration/#server
+# более подробно по коду https://github.com/grafana/dskit/blob/main/server/server.go#L66
+server:
+  http_listen_port: 3200
+  grpc_server_max_recv_msg_size: 101000000   # Максимальный grpc пакет на получение. Что делать в случае проблемы response-too-large https://grafana.com/docs/tempo/latest/troubleshooting/response-too-large/
+  grpc_server_max_send_msg_size: 102000000   # Максимальный grpc пакет на отправку.
+
+# Distributors получают spans и отправляют их соответсвующему ingesters. https://grafana.com/docs/tempo/latest/configuration/#distributor
+# Receivers настраивается по доке opentelemetry-collector https://github.com/open-telemetry/opentelemetry-collector/blob/main/receiver/README.md
+distributor:
+  receivers:                           # this configuration will listen on all ports and protocols that tempo is capable of.
+    jaeger:                            # the receives all come from the OpenTelemetry collector.  more configuration information can
+      protocols:                       # be found there: https://github.com/open-telemetry/opentelemetry-collector/tree/master/receiver
+        thrift_http:                   # https://grafana.com/docs/tempo/latest/troubleshooting/response-too-large/
+        grpc:                          # for a production deployment you should only enable the receivers you need!
+        thrift_binary:
+        thrift_compact:
+    zipkin:
+    otlp:
+      protocols:
+        http:
+        grpc:
+          max_recv_msg_size_mib: 25010000
+    opencensus:
+ 
+# Ingester отвечает за пакетирование трассировок и отправку их в TempoDB (https://grafana.com/docs/tempo/latest/configuration/#ingester).
+ingester:
+  trace_idle_period: 10s               # the length of time after a trace has not received spans to consider it complete and flush it
+  max_block_bytes: 524288000           # cut the head block when it hits this size or ...
+  max_block_duration: 5m               #   this much time passes
+
+# Compactor передают блоки из серверной части хранилища, объединяют их и записывают обратно (https://grafana.com/docs/tempo/latest/configuration/#compactor).
+compactor:
+  compaction:
+    compaction_window: 10m              # blocks in this time window will be compacted together
+    #max_compaction_objects: 1000000    # Maximum number of traces in a compacted block. Default is 6 million.
+    block_retention: 336h               # Duration to keep blocks.  Default is 14 days (336h).
+    compacted_block_retention: 336h     # Duration to keep blocks that have been compacted elsewhere. Default is 1h.
+
+# metrics_generator:
+
+
+# Tempo поддерживает Amazon S3, GCS, Azure и локальную файловую систему для хранения. (https://grafana.com/docs/tempo/latest/configuration/#storage)
+#
+storage:
+  trace:
+    backend: local
+    wal:
+      path: /tmp/tempo/wal         # where to store the the wal locally
+    local:
+      path: /tmp/tempo/blocks
+    search:
+      chunk_size_bytes: 5000000
+      read_buffer_size_bytes: 10048576
+
+# Интерфейс запросов (query_frontend) отвечает за сегментирование входящих запросов для более быстрой параллельной обработки (запрашивающими).(https://grafana.com/docs/tempo/latest/configuration/#query-frontend)
+query_frontend:
+  search:
+    target_bytes_per_job: 104857600 # The target number of bytes for each job to handle when performing a backend search.
+
+# Querier отвечает за запрос к бэкэндам/кэшу TraceID (https://grafana.com/docs/tempo/latest/configuration/#querier)
+querier:
+  frontend_worker:
+    grpc_client_config:
+      max_send_msg_size: 200000000 # Max gRPC message size that can be sent. This value may need to be increased if you have large traces
+  
+  
+# Tempo предоставляет модуль переопределения, позволяющий пользователям устанавливать глобальные или индивидуальные параметры переопределения.(https://grafana.com/docs/tempo/latest/configuration/#overrides)
+overrides:
+  defaults:
+    ingestion:
+      rate_strategy: global
+      burst_size_bytes: 200000000 # Размер пакета (в байтах), используемый при приеме (ingestion)
+      rate_limit_bytes: 100000000 # Ограничение скорости приема для каждого пользователя (в байтах), используемое при приеме (ingestion)
+      max_traces_per_user: 0 # Максимальное количество активных трассировок на пользователя на приеме (ingester). Значение 0 отключает проверку.
+    read:
+      max_bytes_per_tag_values_query: 30000000 # Maximum size in bytes of a tag-values query. Значение 0 отключает проверку.
+    global:
+      max_bytes_per_trace: 10000000 # Maximum size of a single trace in bytes. TRACE_TOO_LARGE: max size of trace (5000000) default = 5000000 (5MB).
