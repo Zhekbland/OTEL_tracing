@@ -1,4 +1,16 @@
 
+# Записки расработчика. Инструмент трассировки OpenTelemetry
+* [Конфигурирование кластера OpenTelemetrySDK + OpenTelemetry Collector + Tempo + Grafana UI](#конфигурирование-кластера-opentelemetrysdk--opentelemetry-collector--tempo--grafana-ui)
+  * [Запуск кластера трассировки Docker-Compose](#запуск-кластера-трассировки-docker-compose)
+* [OpenTelemetry кластер + примеры](#opentelemetry-кластер--примеры)
+  * [Инициализация зависимостей](#инициализация-зависимостей)
+  * [Базовые настройки OpenTelemetry через application.properties](#базовые-настройки-opentelemetry-через-applicationproperties)
+* [Работа с трассировкой в SpringBoot RestController](#работа-с-трассировкой-в-springboot-restcontroller)
+  * [OpenTelemetry - автоматический сбор трассировки](#opentelemetry---автоматический-сбор-трассировки)
+  * [OpenTelemetry - автоматический сбор трассировки + вложенный вручную спан](#opentelemetry---автоматический-сбор-трассировки--вложенный-вручную-спан)
+  * [OpenTelemetry - автоматический сбор трассировки + вложенный спан с помощью AOP](#opentelemetry---автоматический-сбор-трассировки--вложенный-спан-с-помощью-aop)
+  * [OpenTelemetry - ГЛОБАЛЬНЫЙ автоматический сбор трассировки](#opentelemetry---глобальный-автоматический-сбор-трассировки)
+
 # Конфигурирование кластера OpenTelemetrySDK + OpenTelemetry Collector + Tempo + Grafana UI
 
 #### Тут скоро появиться дока по параметрам конфигураций)
@@ -59,7 +71,7 @@ otel.service.name=example-app
 ```
 ***
 
-### Работа с трассировкой в Spring RestController
+### Работа с трассировкой в SpringBoot RestController
 
 #### OpenTelemetry - автоматический сбор трассировки
 По умолчанию opentelemetry-spring-boot-starter выполняет обработку endpoints и оборачивает методы в котроллерах автоматически с вложенностью! В этом примере мы дополнительно задействовали RestTemplate для обращения к внешнему сервису. Использование глобальной трассировки на уровне микросервисов будет рассмотрено ниже!
