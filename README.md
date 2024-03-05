@@ -9,6 +9,7 @@
   * [OpenTelemetry - автоматический сбор трассировки](#opentelemetry---автоматический-сбор-трассировки)
   * [OpenTelemetry - автоматический сбор трассировки + вложенный вручную спан](#opentelemetry---автоматический-сбор-трассировки--вложенный-вручную-спан)
   * [OpenTelemetry - автоматический сбор трассировки + вложенный спан с помощью AOP](#opentelemetry---автоматический-сбор-трассировки--вложенный-спан-с-помощью-aop)
+  * [OpenTelemetry - автоматический сбор трассировки + вложенный спан с помощью Аннотации @WithSpan](#opentelemetry---автоматический-сбор-трассировки--вложенный-спан-с-помощью-аннотации-withspan)
   * [OpenTelemetry - ГЛОБАЛЬНЫЙ автоматический сбор трассировки](#opentelemetry---глобальный-автоматический-сбор-трассировки)
 
 # Конфигурирование кластера OpenTelemetrySDK + OpenTelemetry Collector + Tempo + Grafana UI
@@ -254,7 +255,6 @@ otel.service.name=example-app
     И атрибуты, которые мы добавили.
 
     <img src='https://github.com/zhekbland/OTEL_tracing/blob/main/pic/rest/img6.png'>
-***
 
 ***
 
