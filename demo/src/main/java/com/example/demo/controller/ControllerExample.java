@@ -56,6 +56,19 @@ public class ControllerExample {
         return response;
     }
 
+    @GetMapping("/customTraceWithAnnotation")
+    public String getFromAnotherWithAnnotation() {
+        String response = null;
+
+        service.customMethodWithAnnotation(300);
+
+        for (int i = 1; i < 4; i++) {
+            response = restTemplate.getForObject("https://jsonplaceholder.typicode.com/posts/" + i, String.class);
+        }
+
+        return response;
+    }
+
     @GetMapping("/globalTrace")
     public String getFromAnotherService() {
         String response = null;
