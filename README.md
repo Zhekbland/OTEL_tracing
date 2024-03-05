@@ -217,7 +217,7 @@ otel.service.name=example-app
 ***
 
 #### OpenTelemetry - автоматический сбор трассировки + вложенный спан с помощью Аннотации @WithSpan
-Так же мы можем вызвать экземпляр OpenTelemetry, созданный автоматически, и выполнить свои сборы трассировки c помощью Аннотации @WithSpan! Как видно из кода, мы вызываем метод customMethodWithAnnotation и используем аннотацию @WithSpan для трассировки метода и аннотацию @SpanAttribute для добавления атрибутов.
+Так же мы можем вызвать экземпляр OpenTelemetry, созданный автоматически, и выполнить свои сборы трассировки c помощью Аннотации @WithSpan! Как видно из кода, мы вызываем метод customMethodWithAnnotation и используем аннотацию @WithSpan для трассировки метода и аннотацию @SpanAttribute для добавления атрибутов. И в результате спан собранный с помощью аннотации @WithSpan отлично вкладывается в общий Scope нашего endpoint.
 * Пример кода - [ControllerExample](https://github.com/zhekbland/OTEL_tracing/tree/main/demo/src/main/java/com/example/demo/controller/ControllerExample.java)
 * Пример кода - [ExampleService](https://github.com/zhekbland/OTEL_tracing/tree/main/demo/src/main/java/com/example/demo/service/ExampleService.java)
     ```java
