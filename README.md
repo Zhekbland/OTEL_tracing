@@ -215,6 +215,49 @@ otel.service.name=example-app
 
 ***
 
+#### OpenTelemetry - автоматический сбор трассировки + вложенный спан с помощью Аннотации @WithSpan
+Так же мы можем вызвать экземпляр OpenTelemetry, созданный автоматически, и выполнить свои сборы трассировки c помощью Аннотации @WithSpan! Как видно из кода, мы вызываем метод customMethodWithAnnotation и используем аннотацию @WithSpan для трассировки метода и аннотацию @SpanAttribute для добавления атрибутов.
+* Пример кода - [ControllerExample](https://github.com/zhekbland/OTEL_tracing/tree/main/demo/src/main/java/com/example/demo/controller/ControllerExample.java)
+* Пример кода - [ExampleService](https://github.com/zhekbland/OTEL_tracing/tree/main/demo/src/main/java/com/example/demo/service/ExampleService.java)
+    ```java
+    // Контроллер
+    @GetMapping("/customTraceWithAnnotation")
+    public String getFromAnotherWithAnnotation() {
+        String response = null;
+    
+        service.customMethodWithAnnotation(300);
+    
+        for (int i = 1; i < 4; i++) {
+            response = restTemplate.getForObject("https://jsonplaceholder.typicode.com/posts/" + i, String.class);
+        }
+    
+        return response;
+    }
+    
+    // Метод Сервиса
+    @WithSpan("customWithAnnotation")
+    public void customMethodWithAnnotation(@SpanAttribute("delayMs") Integer delayMs) {
+      try {
+        Thread.sleep(delayMs);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+      }
+    }
+    ```
+  http://localhost:8090/customTraceWithAnnotation
+
+
+* Пример трэйса
+
+    <img src='https://github.com/zhekbland/OTEL_tracing/blob/main/pic/rest/img5.png'>
+  
+    И атрибуты, которые мы добавили.
+
+    <img src='https://github.com/zhekbland/OTEL_tracing/blob/main/pic/rest/img6.png'>
+***
+
+***
+
 #### OpenTelemetry - ГЛОБАЛЬНЫЙ автоматический сбор трассировки
 В этом примере мы используем ДВА приложения demo и demo2. Выполняется вызов http://localhost:8090/globalTrace из проекта demo, который через RestTemplate обращается к demo2 по http://localhost:8095/microService. В свою очередь demo2 обращается к внешнему сервису  https://jsonplaceholder.typicode.com/posts/1. Тут мы наблюдаем как выполняется сбор трассировки на уровне ДВУХ сервисов и все спаны аккуратно складываются под одним трэйсом! OpenTelemetry предоставляет такой подход как [ContextPropagation](https://opentelemetry.io/docs/languages/java/instrumentation/#context-propagation).
 * Пример кода
