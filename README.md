@@ -1,5 +1,5 @@
 
-# Записки расработчика. Инструмент трассировки OpenTelemetry
+# Записки разработчика. Инструмент трассировки OpenTelemetry
 * [Конфигурирование кластера OpenTelemetrySDK + OpenTelemetry Collector + Tempo + Grafana UI](#конфигурирование-кластера-opentelemetrysdk--opentelemetry-collector--tempo--grafana-ui)
   * [Запуск кластера трассировки Docker-Compose](#запуск-кластера-трассировки-docker-compose)
 * [OpenTelemetry кластер + примеры](#opentelemetry-кластер--примеры)
