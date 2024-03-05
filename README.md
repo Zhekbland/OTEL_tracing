@@ -23,13 +23,13 @@
 
 В Grafana UI выбираем хранилище Tempo и можем просматривать трассировку через Search и делать запросы через Trace QL и смотреть/создавать Dashboard. Перечень действий на скринах:
 
-<img src='https://github.com/zhekbland/OTEL_tracing/blob/main/pic/rest/docker/grafana/img1.png'>
+<img src='https://github.com/zhekbland/OTEL_tracing/blob/main/pic/docker/grafana/img1.png'>
 
-<img src='https://github.com/zhekbland/OTEL_tracing/blob/main/pic/rest/docker/grafana/img2.png'>
+<img src='https://github.com/zhekbland/OTEL_tracing/blob/main/pic/docker/grafana/img2.png'>
 
-<img src='https://github.com/zhekbland/OTEL_tracing/blob/main/pic/rest/docker/grafana/img3.png'>
+<img src='https://github.com/zhekbland/OTEL_tracing/blob/main/pic/docker/grafana/img3.png'>
 
-<img src='https://github.com/zhekbland/OTEL_tracing/blob/main/pic/rest/docker/grafana/img4.png'>
+<img src='https://github.com/zhekbland/OTEL_tracing/blob/main/pic/docker/grafana/img4.png'>
 
 ***
 ***
