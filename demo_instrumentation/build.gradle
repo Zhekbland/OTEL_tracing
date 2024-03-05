@@ -1,0 +1,47 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.3'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+repositories {
+	mavenCentral()
+}
+
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+	//Lombok
+	compileOnly 'org.projectlombok:lombok:1.18.26'
+	annotationProcessor 'org.projectlombok:lombok:1.18.26'
+	implementation 'ch.qos.logback:logback-classic:1.4.14'
+
+	// OpenTelemetry трэйсинг
+	implementation(platform("io.opentelemetry:opentelemetry-bom:1.34.0"))
+	implementation 'io.opentelemetry:opentelemetry-api'
+	implementation 'io.opentelemetry:opentelemetry-sdk'
+	implementation 'io.opentelemetry:opentelemetry-exporter-otlp'
+	implementation("io.opentelemetry.instrumentation:opentelemetry-resources:2.0.0-alpha")
+
+//	implementation 'io.grpc:grpc-stub:1.61.0'
+//	implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.22'
+//	implementation 'org.conscrypt:conscrypt-openjdk-uber:2.5.2'
+//	implementation 'org.apiguardian:apiguardian-api:1.1.2'
+//	implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+//	runtimeOnly 'com.squareup.okio:okio-jvm:3.6.0'
+//	implementation 'com.google.guava:failureaccess:1.0.1'
+//	implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
