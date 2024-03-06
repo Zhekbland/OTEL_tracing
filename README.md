@@ -2,16 +2,23 @@
 # Записки разработчика. Инструмент трассировки OpenTelemetry
 * [Конфигурирование кластера OpenTelemetrySDK + OpenTelemetry Collector + Tempo + Grafana UI](#конфигурирование-кластера-opentelemetrysdk--opentelemetry-collector--tempo--grafana-ui)
   * [Запуск кластера трассировки Docker-Compose](#запуск-кластера-трассировки-docker-compose)
-* [OpenTelemetry кластер + примеры](#opentelemetry-кластер--примеры)
+***
+* [OpenTelemetry Autoconfiguration и Spring Boot](#opentelemetry-autoconfiguration-и-spring-boot)
   * [Инициализация зависимостей](#инициализация-зависимостей)
   * [Базовые настройки OpenTelemetry через application.properties](#базовые-настройки-opentelemetry-через-applicationproperties)
-* [Работа с трассировкой в SpringBoot RestController](#работа-с-трассировкой-в-springboot-restcontroller)
-  * [OpenTelemetry - автоматический сбор трассировки](#opentelemetry---автоматический-сбор-трассировки)
-  * [OpenTelemetry - автоматический сбор трассировки + вложенный вручную спан](#opentelemetry---автоматический-сбор-трассировки--вложенный-вручную-спан)
-  * [OpenTelemetry - автоматический сбор трассировки + вложенный спан с помощью AOP](#opentelemetry---автоматический-сбор-трассировки--вложенный-спан-с-помощью-aop)
-  * [OpenTelemetry - автоматический сбор трассировки + вложенный спан с помощью Аннотации @WithSpan](#opentelemetry---автоматический-сбор-трассировки--вложенный-спан-с-помощью-аннотации-withspan)
-  * [OpenTelemetry - ГЛОБАЛЬНЫЙ автоматический сбор трассировки](#opentelemetry---глобальный-автоматический-сбор-трассировки)
-
+  * [Работа с трассировкой в SpringBoot RestController](#работа-с-трассировкой-в-springboot-restcontroller)
+    * [OpenTelemetry - автоматический сбор трассировки](#opentelemetry---автоматический-сбор-трассировки)
+    * [OpenTelemetry - автоматический сбор трассировки + вложенный вручную спан](#opentelemetry---автоматический-сбор-трассировки--вложенный-вручную-спан)
+    * [OpenTelemetry - автоматический сбор трассировки + вложенный спан с помощью AOP](#opentelemetry---автоматический-сбор-трассировки--вложенный-спан-с-помощью-aop)
+    * [OpenTelemetry - автоматический сбор трассировки + вложенный спан с помощью Аннотации @WithSpan](#opentelemetry---автоматический-сбор-трассировки--вложенный-спан-с-помощью-аннотации-withspan)
+    * [OpenTelemetry - ГЛОБАЛЬНЫЙ автоматический сбор трассировки](#opentelemetry---глобальный-автоматический-сбор-трассировки)
+***
+* [OpenTelemetry instrumentation - ручная конфигураци и Spring Boot или Java SE](#opentelemetry-instrumentation---ручная-конфигураци-и-spring-boot-или-java-se)
+  * [Инициализация зависимостей для Java SE или SpringBoot](#инициализация-зависимостей-для-java-se-или-springboot)
+  * [Инициализация компонентов OpenTelemetrySDK](#инициализация-компонентов-opentelemetrysdk)
+  * [OpenTelemetry Instrumentation - ручная работа с трассировкой в SpringBoot](#opentelemetry-instrumentation---ручная-работа-с-трассировкой-в-springboot)
+    * [OpenTelemetry - сбор трассировки вручную](#opentelemetry---сбор-трассировки-вручную)
+    * [OpenTelemetry - сбор трассировки вручную с помощью AOP](#opentelemetry---сбор-трассировки-вручную-с-помощью-aop)
 # Конфигурирование кластера OpenTelemetrySDK + OpenTelemetry Collector + Tempo + Grafana UI
 
 #### Тут скоро появиться дока по параметрам конфигураций)
@@ -47,10 +54,10 @@
 ***
 ***
 
-# OpenTelemetry кластер + примеры
+# OpenTelemetry Autoconfiguration и Spring Boot
 
 ### Репозиторий с примерами:
-Пример моего приложения можете найти тут (включает кластер для трассировки и проекты demo и demo2 (для разбора глобальной трассировки))!
+Пример моего приложения можете найти тут (включает кластер для трассировки и проекты [demo](https://github.com/zhekbland/OTEL_tracing/tree/main/demo) и [demo2](https://github.com/zhekbland/OTEL_tracing/tree/main/demo2) (для разбора глобальной трассировки))!
 ***
 ### Инициализация зависимостей
 Инициализация OpenTelemetry SDK в SpringBoot v3 ([офф. док.](https://opentelemetry.io/docs/languages/java/automatic/spring-boot/))
@@ -259,7 +266,7 @@ otel.service.name=example-app
 ***
 
 #### OpenTelemetry - ГЛОБАЛЬНЫЙ автоматический сбор трассировки
-В этом примере мы используем ДВА приложения demo и demo2. Выполняется вызов http://localhost:8090/globalTrace из проекта demo, который через RestTemplate обращается к demo2 по http://localhost:8095/microService. В свою очередь demo2 обращается к внешнему сервису  https://jsonplaceholder.typicode.com/posts/1. Тут мы наблюдаем как выполняется сбор трассировки на уровне ДВУХ сервисов и все спаны аккуратно складываются под одним трэйсом! OpenTelemetry предоставляет такой подход как [ContextPropagation](https://opentelemetry.io/docs/languages/java/instrumentation/#context-propagation).
+В этом примере мы используем ДВА приложения [demo](https://github.com/zhekbland/OTEL_tracing/tree/main/demo) и [demo2](https://github.com/zhekbland/OTEL_tracing/tree/main/demo2). Выполняется вызов http://localhost:8090/globalTrace из проекта demo, который через RestTemplate обращается к demo2 по http://localhost:8095/microService. В свою очередь demo2 обращается к внешнему сервису  https://jsonplaceholder.typicode.com/posts/1. Тут мы наблюдаем как выполняется сбор трассировки на уровне ДВУХ сервисов и все спаны аккуратно складываются под одним трэйсом! OpenTelemetry предоставляет такой подход как [ContextPropagation](https://opentelemetry.io/docs/languages/java/instrumentation/#context-propagation).
 * Пример кода
     ```java
     //DEMO
@@ -292,3 +299,366 @@ otel.service.name=example-app
 * Пример трэйса
 
     <img src='https://github.com/zhekbland/OTEL_tracing/blob/main/pic/rest/img4.png'>
+
+
+
+# OpenTelemetry instrumentation - ручная конфигураци и Spring Boot или Java SE
+
+### Репозиторий с примерами:
+Пример моего приложения можете найти тут [demo_instrumentation](https://github.com/zhekbland/OTEL_tracing/tree/main/demo_instrumentation)!
+
+***
+
+### Инициализация зависимостей для Java SE или SpringBoot
+Ручная инициализация библиотек OpenTelemetry SDK в SpringBoot v3 ([офф. док.](https://opentelemetry.io/docs/languages/java/instrumentation/#manual-instrumentation-setup))
+* Пример - [build.gradle](https://github.com/zhekbland/OTEL_tracing/tree/main/demo_instrumentation/build.gradle) (закоментированные зависимости потребуются при использовании OpenTelemetry с Java SE)
+
+***
+
+### Инициализация компонентов OpenTelemetrySDK.
+Можно воспользоваться документацией или заготовкой ниже.
+Инициализации трассировки из официальной документации [пример](https://github.com/open-telemetry/opentelemetry-java-examples/blob/main/sdk-usage/src/main/java/io/opentelemetry/sdk/example/ConfigureSpanProcessorExample.java) (актуальный код примера поддерживается и обновляется).
+* Код для инициализации трассировки - [RestTemplateConfig](https://github.com/zhekbland/OTEL_tracing/tree/main/demo/src/main/java/com/example/demo/controller/ControllerExample.java)
+
+```java
+@Configuration
+public class RestTemplateConfig {
+
+  @Value("${otel.collectorUrl:http://localhost:4317}")
+  private String collectorUrl;
+
+  @Value("${otel.batchSize:512}")
+  private Integer batchSize;
+
+  @Value("${otel.batchSize:5}")
+  private Long delayBatchSec;
+
+  @Value("${otel.maxQueueSize:2048}")
+  private Integer maxQueueSize;
+
+  @Value("${otel.serviceVersion:0.1.0}")
+  private String serviceVersion;
+
+  @Value("${otel.ratio:1.0}")
+  private Double ratio;
+
+  @Value("${otel.serviceName:demo_instrumentation}")
+  private String serviceName;
+
+  @Bean
+  public OpenTelemetry openTelemetry() {
+
+    // Настройка и инициализация Exporter для отправки данных в OpenTelemetry Collector GRPC  
+    OtlpGrpcSpanExporter exporter = OtlpGrpcSpanExporter.builder()
+            .setEndpoint(collectorUrl) // URL OpenTelemetry Collector. По умолчанию "http://localhost:4317". 4317 GRPC, 4318 HTTP.
+            .setCompression("gzip") // Компрессия "none"/"gzip" по умолчанию "none"
+            .build();
+
+    // Настройка и инициализация пакетного процессора для батчинга данных
+    BatchSpanProcessor batchSpanProcessor = BatchSpanProcessor.builder(exporter)
+            .setMaxExportBatchSize(batchSize) // Максимальный размер пакета для батчинга. По умолчанию 512.
+            .setScheduleDelay(delayBatchSec, TimeUnit.SECONDS) // Максимальный диапазон времени перед отправкой. По умолчанию 5000ms.
+            .setMaxQueueSize(maxQueueSize) // Максимальный размер внутренней очереди. По умолчанию 2048.
+            .build();
+
+    // Метаданные, ресурс-атрибуты
+    Resource resource = Resource.getDefault()
+            .merge(Resource.create(Attributes.builder()
+                    .put(ResourceAttributes.SERVICE_NAME, serviceName)
+                    .put(ResourceAttributes.SERVICE_VERSION, serviceVersion)
+                    .put(ResourceAttributes.HOST_NAME, System.getenv("HOSTNAME"))
+                    .build()));
+
+    // Процент записи трассировки
+    Sampler traceIdRatioBased = Sampler.traceIdRatioBased(ratio); // По умолчанию 100%.
+
+    // Настройка и инициализация SDK для OpenTelemetry
+    SdkTracerProvider tracerProvider = SdkTracerProvider.builder()
+            .setSampler(traceIdRatioBased)
+            .setResource(resource)
+            .addSpanProcessor(batchSpanProcessor)
+            .build();
+
+    return OpenTelemetrySdk.builder().setTracerProvider(tracerProvider).build();
+  }
+}
+```
+
+Параметры в **OtlpGrpcSpanExporter**:
+
+* **setCompression** - установка компресси при отправке пакетов со спанами. По умолчанию "none", для влкючения компрессии указывается "gzip".
+
+
+Важные параметры конфигурируются в **BatchSpanProcessor**:
+
+* **setMaxExportBatchSize** - устанавливается максимальный размер передаваемого пакета во время батчинга. Значение равно кол-ву спанов. Параметр напрямую зависит от **setScheduleDelay***.
+* **setScheduleDelay** - устанавливает время между "батчингами", отправкой пакетов спанов в OpenTelemetry Collector. Параметр напрямую зависит от **setMaxExportBatchSize***.
+* **setMaxQueueSize** - устанавливает размер внутренней очереди BatchSpanProcessor. Внутренняя очередь - это буфер, необходимый для сохранения тех спанов, которые не успели отправиться во время батчинга (отправки пакета спанов). Если размер очереди мaxQueueSize переполняется, то происходит удаление спанов, которые должны были попасть в данную очередь.
+
+*Зависимость параметров maxExportBatchSize, scheduleDelay. Тут всё просто, если прошёл установленный диапазон времени scheduleDelay, тогда происходит отправка, даже если maxExportBatchSize не достиг указанного значения. Иначе если maxExportBatchSize достиг установленного значения, тогда выполняется отправка, даже если scheduleDelay не достиг установленного диапазона времени!
+
+*maxExportBatchSize - имеет неявный предел в зависимости от размера одного спана. Без установленной компрессии в параметре setCompression("gzip") - maxExportBatchSize = 40000-50000 достигает предела размера пакета GRPC в 4Мб.
+
+
+**! Если сообщения генерируются с такой скоростью/частотой что батчинг и его различные вариации настроек(maxExportBatchSize, scheduleDelay) не успевают осуществлять отправку и мaxQueueSize постоянно заполняется и/или переполняется, то технология трассировки вероятно не ваш выбор).**
+
+
+
+Параметр сэмплирования **Sampler**:
+
+* **traceIdRatioBased** - устанавливается в диапазоне от 0.1 до 1.0, что эквивалентно 10% - 100%. То есть кол-во трассируемой информации. По умолчанию 100%.
+
+
+**Советы.**
+
+* Для трассировки достаточно создать экземпляр SdkTracerProvider tracerProvider.
+* Если создавать OpenTelemetrySdk.builder().setTracerProvider(tracerProvider).build();  то он определяет свой SdkTracerProvider, который как показала практика, имеет приоритет над собственно-созданными экземплярами SdkTracerProvider. И применяет параметры из SdkTracerProvider от OpenTelemetrySdk.
+* Если создавать OpenTelemetrySdk.builder().setTracerProvider(tracerProvider).build() именно через build(), то OpenTelemetrySdk можно переопределить во время работы приложения. Если использовать buildAndRegisterGlobal(), в таком случае OpenTelemetrySdk станет глобальным и его нельзя переопределить стандартными средствами.
+
+Полноценные примеры и обновляемый код можно найти в репозитории от создателей OpenTelemetry [gitHub](https://github.com/open-telemetry/opentelemetry-java-examples/tree/main/sdk-usage/src/main/java/io/opentelemetry/sdk/example).
+
+***
+
+### OpenTelemetry Instrumentation - ручная работа с трассировкой в SpringBoot
+
+#### OpenTelemetry - сбор трассировки вручную
+В этом примере мы используем средства AOP для обертки метода контроллера - [getFromAnother()](https://github.com/zhekbland/OTEL_tracing/tree/main/demo_instrumentation/src/main/java/com/example/demo/controller/ControllerExample.java). Создав TracingAspect, с помощью AOP выполняем обертку над методом контроллера, создание scope и сбор трассировки. Так же внутри метода демонстрируется создание спанов вручную, создание scope для rootSpan и создание дочерних спанов (вложеных в rootSpan). Ниже примеры кода. **Никто не заставляет вас так использовать трассировку вручную и оборачивать вложенные методы самостоятельно или с помощью AOP - это всего лишь пример))**
+
+Лучше использовать данный подход [OpenTelemetry - сбор трассировки вручную с помощью AOP](#opentelemetry---сбор-трассировки-вручную-с-помощью-aop), но для примера расмотрим и такой-гибридный.
+* Пример кода - [ControllerExample](https://github.com/zhekbland/OTEL_tracing/tree/main/demo_instrumentation/src/main/java/com/example/demo/controller/ControllerExample.java)
+    ```java
+    @RestController
+    public class ControllerExample {
+    
+        private final RestTemplate restTemplate;
+        private final Tracer tracer;
+        private final ExampleService service;
+    
+        public ControllerExample(OpenTelemetry openTelemetry, RestTemplate restTemplate, ExampleService service) {
+            this.restTemplate = restTemplate;
+            this.tracer = openTelemetry.getTracer(ControllerExample.class.getName(), "0.1.0");
+            this.service = service;
+        }
+    
+        @GetMapping("/customTrace")
+        public String getFromAnother() {
+            String response = null;
+    
+            Span parentSpan = tracer.spanBuilder("My custom method").startSpan();
+            service.customMethod(parentSpan);
+            parentSpan.end();
+    
+            Span rootSpan = tracer.spanBuilder("rootSpan").startSpan();
+            try (Scope scope = rootSpan.makeCurrent()) {
+                for (int i = 1; i < 4; i++) {
+                    Span childSpan = tracer.spanBuilder("childSpan").startSpan();
+                    response = restTemplate.getForObject("https://jsonplaceholder.typicode.com/posts/" + i, String.class);
+                    childSpan.setAttribute("response", Objects.requireNonNullElse(response, ""));
+                    childSpan.end();
+                }
+            } finally {
+                rootSpan.end();
+            }
+    
+            return response;
+        }
+    
+    }
+    ```
+  * Пример AOP кода - [TracingAspect](https://github.com/zhekbland/OTEL_tracing/tree/main/demo_instrumentation/src/main/java/com/example/demo/aop/TracingAspect.java)
+  ```java
+  @Aspect
+  @Component
+  public class TracingAspect {
+  
+    private final Tracer tracer;
+  
+    public TracingAspect(OpenTelemetry openTelemetry) {
+      this.tracer = openTelemetry.getTracer("innerMethods");
+    }
+  
+    @Pointcut("execution(* com.example.demo.controller.ControllerExample.getFromAnother(..))" +
+            " || execution(* com.example.demo.controller.ControllerExample.getFromAnotherWithAop(..))")
+    public void pointcut() {
+  
+    }
+  
+    @Around(value = "pointcut()")
+    public Object traceAroundGetFromAnother(ProceedingJoinPoint joinPoint) throws Throwable {
+      Span elementSpan = null;
+      Scope scope = null;
+      Object result = null;
+      try {
+        elementSpan = tracer.spanBuilder("getFromAnother")
+                .startSpan()
+                .setAllAttributes(
+                        Attributes.empty()
+  
+                );
+        scope = elementSpan.makeCurrent();
+  
+        result = joinPoint.proceed();
+  
+        elementSpan.setAttribute("response", Objects.requireNonNullElse((String) result, ""));
+      } catch (Throwable throwable) {
+        closeSpanByError(elementSpan, throwable);
+        throw throwable;
+      } finally {
+        if (scope != null) {
+          scope.close();
+        }
+        if (elementSpan != null) {
+          elementSpan.end();
+        }
+      }
+      return result;
+    }
+  
+    private void closeSpanByError(Span span, Throwable throwable) {
+      if (span != null) {
+        span.setStatus(StatusCode.ERROR, throwable.getMessage());
+        span.recordException(throwable);
+        span.end();
+      }
+    }
+  }
+  ```
+    http://localhost:8888/customTrace
+
+
+* Пример трэйса. На скрине видно что создался глобальный трэйс/спан для метода контроллера getFromAnother(), также обернулся наш кастомный метод и rootSpan с child, внутри которых мы обращаемся к внешнему сервису https://jsonplaceholder.typicode.com/posts/1.
+
+    <img src='https://github.com/zhekbland/OTEL_tracing/blob/main/pic/instrumentation/img1.png'>
+
+* На данном скрине видно, что в атрибуты мы вложили ответ от вызова внешнего сервиса https://jsonplaceholder.typicode.com/posts/1.
+
+    <img src='https://github.com/zhekbland/OTEL_tracing/blob/main/pic/instrumentation/img2.png'>
+
+***
+
+#### OpenTelemetry - сбор трассировки вручную с помощью AOP
+В этом примере мы полноценно используем средства AOP для обертки метода контроллера - [getFromAnotherWithAop()](https://github.com/zhekbland/OTEL_tracing/tree/main/demo_instrumentation/src/main/java/com/example/demo/controller/ControllerExample.java) и всех вложенного метода. Вся магия происходит в классе [TracingAspect](https://github.com/zhekbland/OTEL_tracing/tree/main/demo_instrumentation/src/main/java/com/example/demo/aop/TracingAspect.java). Создав TracingAspect, с помощью AOP выполняем обертку над методом контроллера, создание scope и сбор трассировки. Так же в следующем аспекте выполняется обертка и сбор трассировки над методом customMethod(Integer delayMs). Ниже примеры кода.
+* Пример кода - [ControllerExample](https://github.com/zhekbland/OTEL_tracing/tree/main/demo_instrumentation/src/main/java/com/example/demo/controller/ControllerExample.java). Теперь метод не имеет лишнего кода и логики благодаря AOP.
+    ```java
+    @RestController
+    public class ControllerExample {
+    
+        private final RestTemplate restTemplate;
+        private final Tracer tracer;
+        private final ExampleService service;
+    
+        public ControllerExample(OpenTelemetry openTelemetry, RestTemplate restTemplate, ExampleService service) {
+            this.restTemplate = restTemplate;
+            this.tracer = openTelemetry.getTracer(ControllerExample.class.getName(), "0.1.0");
+            this.service = service;
+        }
+    
+        @GetMapping("/customAopTrace")
+        public String getFromAnotherWithAop() {
+            String response = null;
+    
+            service.customMethod(250);
+    
+            response = restTemplate.getForObject("https://jsonplaceholder.typicode.com/posts/1", String.class);
+    
+            return response;
+        }
+    
+    }
+    ```
+  * Пример AOP кода - [TracingAspect](https://github.com/zhekbland/OTEL_tracing/tree/main/demo_instrumentation/src/main/java/com/example/demo/aop/TracingAspect.java)
+  ```java
+  @Aspect
+  @Component
+  public class TracingAspect {
+  
+      private final Tracer tracer;
+  
+      public TracingAspect(OpenTelemetry openTelemetry) {
+          this.tracer = openTelemetry.getTracer("innerMethods");
+      }
+  
+      @Pointcut("execution(* com.example.demo.controller.ControllerExample.getFromAnother(..))" +
+              " || execution(* com.example.demo.controller.ControllerExample.getFromAnotherWithAop(..))")
+      public void pointcut() {
+  
+      }
+  
+      @Around(value = "pointcut()")
+      public Object traceAroundGetFromAnother(ProceedingJoinPoint joinPoint) throws Throwable {
+          Span elementSpan = null;
+          Scope scope = null;
+          Object result = null;
+          try {
+              elementSpan = tracer.spanBuilder("getFromAnother")
+                      .startSpan()
+                      .setAllAttributes(
+                              Attributes.empty()
+  
+                      );
+              scope = elementSpan.makeCurrent();
+  
+              result = joinPoint.proceed();
+  
+              elementSpan.setAttribute("response", Objects.requireNonNullElse((String) result, ""));
+          } catch (Throwable throwable) {
+              closeSpanByError(elementSpan, throwable);
+              throw throwable;
+          } finally {
+              if (scope != null) {
+                  scope.close();
+              }
+              if (elementSpan != null) {
+                  elementSpan.end();
+              }
+          }
+          return result;
+      }
+  
+      @Around(value = "execution(* com.example.demo.service.ExampleService.customMethod(Integer)) && args(delayMs)")
+      public Object traceAroundCustomMethod(ProceedingJoinPoint joinPoint, Integer delayMs) throws Throwable {
+          Span elementSpan = null;
+          Object result = null;
+          try {
+              elementSpan = tracer.spanBuilder("customMethod")
+                      .startSpan()
+                      .setAllAttributes(
+                              Attributes.builder()
+                                      .put("type", "delay")
+                                      .put("delayMs", delayMs.toString())
+                                      .build()
+  
+                      );
+              result = joinPoint.proceed();
+          } catch (Throwable throwable) {
+              closeSpanByError(elementSpan, throwable);
+              throw throwable;
+          } finally {
+              if (elementSpan != null) {
+                  elementSpan.end();
+              }
+          }
+          return result;
+      }
+  
+      private void closeSpanByError(Span span, Throwable throwable) {
+          if (span != null) {
+              span.setStatus(StatusCode.ERROR, throwable.getMessage());
+              span.recordException(throwable);
+              span.end();
+          }
+      }
+  }
+  ```
+  http://localhost:8888/customAopTrace
+
+
+* Пример трэйса. На скрине видно что создался глобальный трэйс/спан для метода контроллера getFromAnotherWithAop(), также обернулся наш кастомный метод. Внутри метода контроллера getFromAnotherWithAop() мы обращаемся к внешнему сервису https://jsonplaceholder.typicode.com/posts/1, по этому заметна общая длительность главного спана, большая чем дочернего.
+
+    <img src='https://github.com/zhekbland/OTEL_tracing/blob/main/pic/instrumentation/img3.png'>
+
+* На данном скрине видно, что в атрибуты главного спана мы вложили ответ от вызова внешнего сервиса https://jsonplaceholder.typicode.com/posts/1.
+
+    <img src='https://github.com/zhekbland/OTEL_tracing/blob/main/pic/instrumentation/img4.png'>
+
+***
